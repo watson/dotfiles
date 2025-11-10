@@ -1,0 +1,12 @@
+
+so ~/.vim/general.vim
+so ~/.vim/bundles.vim
+so ~/.vim/shortcuts.vim
+so ~/.vim/extra.vim
+
+" NOTES
+" :set ft=ruby to force the syntax coloration
+
+" au WinLeave * set nocursorline nocursorcolumn
+" au WinEnter * set cursorline 
+" set cursorline 

@@ -1,0 +1,106 @@
+source ~/dotfiles/zsh/zshrc.oh-my-zsh
+
+# Use fzf for fuzzy searching (installed via Homebrew)
+source <(fzf --zsh)
+
+# BEGIN ANSIBLE MANAGED BLOCK
+# Load homebrew shell variables
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Force certain more-secure behaviours from homebrew
+export HOMEBREW_NO_INSECURE_REDIRECT=1
+export HOMEBREW_CASK_OPTS=--require-sha
+export HOMEBREW_DIR=/opt/homebrew
+export HOMEBREW_BIN=/opt/homebrew/bin
+
+# Load python shims
+eval "$(pyenv init -)"
+
+# Load ruby shims
+eval "$(rbenv init -)"
+
+# Prefer GNU binaries to Macintosh binaries.
+export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+
+# Add GCloud to PATH
+source "/opt/homebrew/share/google-cloud-sdk/path.zsh.inc"
+source "/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc"
+# Add datadog devtools binaries to the PATH
+export PATH="$HOME/dd/devtools/bin:$PATH"
+
+# Point GOPATH to our go sources
+export GOPATH="$HOME/go"
+
+# Add binaries that are go install-ed to PATH
+export PATH="$GOPATH/bin:$PATH"
+
+# Point DATADOG_ROOT to ~/dd symlink
+export DATADOG_ROOT="$HOME/dd"
+
+# Tell the devenv vm to mount $GOPATH/src rather than just dd-go
+export MOUNT_ALL_GO_SRC=1
+
+# store key in the login keychain instead of aws-vault managing a hidden keychain
+export AWS_VAULT_KEYCHAIN_NAME=login
+
+# tweak session times so you don't have to re-enter passwords every 5min
+export AWS_SESSION_TTL=24h
+export AWS_ASSUME_ROLE_TTL=1h
+
+# Helm switch from storing objects in kubernetes configmaps to
+# secrets by default, but we still use the old default.
+export HELM_DRIVER=configmap
+
+# Go 1.16+ sets GO111MODULE to off by default with the intention to
+# remove it in Go 1.18, which breaks projects using the dep tool.
+# https://blog.golang.org/go116-module-changes
+export GO111MODULE=auto
+export GOPRIVATE=github.com/DataDog
+# Configure Go to pull go.ddbuild.io packages.
+export GOPROXY=binaries.ddbuild.io,https://proxy.golang.org,direct
+export GONOSUMDB=github.com/DataDog,go.ddbuild.io
+# END ANSIBLE MANAGED BLOCK
+
+# GitLab (Datadog)
+export GITLAB_TOKEN=$(security find-generic-password -a ${USER} -s gitlab_token -w)
+
+# command history
+export HISTSIZE=10000
+export HISTFILE="$HOME/.history"
+export SAVEHIST=$HISTSIZE
+setopt hist_ignore_all_dups
+
+# Node Version Manager
+export NVM_DIR="$HOME/.nvm"
+export NVM_AUTOLOAD=1
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
+# Node.js build tooling
+export CC="ccache cc"
+export CXX="ccache c++"
+
+# libpq (required by `pg-native`, which is required by `yarn services` in `dd-trace-js`)
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+# Make Python 3.12 the default
+export PATH="/opt/homebrew/opt/python@3.12/libexec/bin:$PATH"
+
+# Fix and rebuild the Open With database
+alias fixow='/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user;killall Finder;echo "Open With has been rebuilt, Finder will relaunch"'
+
+alias nack='ack --ignore-dir=node_modules'
+alias npm-offline='npm install --cache-min 999999'
+alias unfuck='tput rmacs'
+alias chrome='open -a /Applications/Google\ Chrome.app'
+
+# Created by `pipx` on 2025-09-15 08:19:26
+export PATH="$PATH:/Users/thomas.watson/.local/bin"
+
+# BEGIN SCFW MANAGED BLOCK
+alias npm="scfw run npm"
+alias pip="scfw run pip"
+alias poetry="scfw run poetry"
+export SCFW_DD_AGENT_LOG_PORT="10365"
+export SCFW_DD_LOG_LEVEL="ALLOW"
+export SCFW_HOME="/Users/thomas.watson/.scfw"
+# END SCFW MANAGED BLOCK

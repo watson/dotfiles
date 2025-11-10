@@ -1,0 +1,30 @@
+[user]
+	name = Thomas Watson
+	email = w@tson.dk
+[color]
+	branch = auto
+	status = auto
+	diff = auto
+[color "diff"]
+	meta = yellow
+	frag = cyan
+	old = red
+	new = green
+[core]
+	editor = vim
+	symlinks = false
+	hooksPath = /usr/local/dd/global_hooks
+[push]
+	default = simple
+[alias]
+	lol = log --graph --decorate --pretty=oneline --abbrev-commit
+	st = status -s
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+[include]
+	path = ~/dotfiles/gitconfig-signing
+[includeIf "hasconfig:remote.*.url:git@github.com:DataDog/*"]
+	path = ~/dd/.gitconfig
