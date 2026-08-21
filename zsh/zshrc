@@ -84,7 +84,10 @@ export GONOSUMDB=github.com/DataDog,go.ddbuild.io
 # END ANSIBLE MANAGED BLOCK
 
 # GitLab (Datadog)
-export GITLAB_TOKEN=$(security find-generic-password -a ${USER} -s gitlab_token -w)
+if gitlab_token="$(security find-generic-password -a "${USER}" -s gitlab_token -w 2>/dev/null)"; then
+  export GITLAB_TOKEN="$gitlab_token"
+fi
+unset gitlab_token
 
 # command history
 export HISTSIZE=10000
