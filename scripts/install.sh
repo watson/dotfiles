@@ -37,6 +37,7 @@ source "$script_dir/install-dependencies.sh"
 source "$script_dir/install-plugins.sh"
 
 install_required_dependencies
+install_nvm
 install_oh_my_zsh
 "$script_dir/create-links.sh"
 install_tpm "$dotfiles_dir"

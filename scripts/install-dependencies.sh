@@ -81,3 +81,43 @@ install_required_dependencies() {
     echo "Skipping Homebrew dependencies."
   fi
 }
+
+install_nvm() {
+  local install_dir="$HOME/.nvm"
+  local repository="https://github.com/nvm-sh/nvm.git"
+  local latest_version
+
+  if [ -d "$install_dir/.git" ] && [ -s "$install_dir/nvm.sh" ]; then
+    echo "NVM is already installed."
+    return
+  fi
+
+  if [ -e "$install_dir" ] || [ -L "$install_dir" ]; then
+    echo "Cannot install NVM: $install_dir exists but is not a complete installation." >&2
+    return 1
+  fi
+
+  echo "Missing preferred dependency: nvm"
+  if ! confirm "Install the latest stable NVM release?"; then
+    return
+  fi
+
+  if ! command -v git >/dev/null 2>&1; then
+    echo "Cannot install NVM: git is not installed." >&2
+    return 1
+  fi
+
+  latest_version="$(
+    git ls-remote --tags --refs --sort=-version:refname "$repository" 'v*' |
+      sed 's#.*refs/tags/##' |
+      awk '/^v[0-9]+\.[0-9]+\.[0-9]+$/ { print; exit }'
+  )"
+
+  if [ -z "$latest_version" ]; then
+    echo "Cannot install NVM: no stable release tag was found." >&2
+    return 1
+  fi
+
+  echo "Installing NVM $latest_version..."
+  git clone --depth=1 --branch "$latest_version" "$repository" "$install_dir"
+}
