@@ -14,29 +14,72 @@ done
 
 script_dir="$(cd -P "$(dirname "$source_path")" && pwd)"
 dotfiles_dir="$(dirname "$script_dir")"
-zshrc_backup="$dotfiles_dir/.zshrc.backup"
 
-# Preserve the user's existing zsh configuration. Never overwrite an earlier
-# backup, since it may be the only copy of the original file.
-if { [ -e "$HOME/.zshrc" ] || [ -L "$HOME/.zshrc" ]; } && \
-   ! { [ -L "$HOME/.zshrc" ] && [ "$(readlink "$HOME/.zshrc")" = "$dotfiles_dir/zsh/zshrc" ]; }; then
-  if [ -e "$zshrc_backup" ] || [ -L "$zshrc_backup" ]; then
-    echo "Cannot install: $zshrc_backup already exists." >&2
-    echo "Move or remove it after confirming which copy you want to keep." >&2
-    exit 1
+check_link_destination() {
+  local target="$1"
+  local link_path="$2"
+
+  if [ -L "$link_path" ] && [ "$(readlink "$link_path")" = "$target" ]; then
+    return
   fi
 
-  mv "$HOME/.zshrc" "$zshrc_backup"
-  echo "Backed up $HOME/.zshrc to $zshrc_backup"
-fi
+  if [ -e "$link_path" ] || [ -L "$link_path" ]; then
+    echo "Cannot manage $link_path: it already exists and is not the expected link." >&2
+    return 1
+  fi
+}
 
-# folders
-ln -sfn "$dotfiles_dir/vim"                 "$HOME/.vim"
-ln -sfn "$dotfiles_dir/tmux"                "$HOME/.tmux"
+ensure_link() {
+  local target="$1"
+  local link_path="$2"
 
-# files
-ln -sfn "$dotfiles_dir/zsh/zshrc"           "$HOME/.zshrc"
-ln -sfn "$dotfiles_dir/vim/vimrc"           "$HOME/.vimrc"
-ln -sfn "$dotfiles_dir/tmux/tmux.conf"      "$HOME/.tmux.conf"
-ln -sfn "$dotfiles_dir/gitconfig"           "$HOME/.gitconfig"
-ln -sfn "$dotfiles_dir/npmrc"               "$HOME/.npmrc"
+  if [ -L "$link_path" ] && [ "$(readlink "$link_path")" = "$target" ]; then
+    echo "Already linked: $link_path"
+    return
+  fi
+
+  ln -s "$target" "$link_path"
+  echo "Linked: $link_path -> $target"
+}
+
+create_links() {
+  local index
+  local conflicts=0
+  local -a targets=(
+    "$dotfiles_dir/vim"
+    "$dotfiles_dir/tmux"
+    "$dotfiles_dir/zsh/zshrc"
+    "$dotfiles_dir/vim/vimrc"
+    "$dotfiles_dir/tmux/tmux.conf"
+    "$dotfiles_dir/gitconfig"
+    "$dotfiles_dir/npmrc"
+  )
+  local -a link_paths=(
+    "$HOME/.vim"
+    "$HOME/.tmux"
+    "$HOME/.zshrc"
+    "$HOME/.vimrc"
+    "$HOME/.tmux.conf"
+    "$HOME/.gitconfig"
+    "$HOME/.npmrc"
+  )
+
+  # Check every destination before changing anything, so a conflict never
+  # leaves the link set half-installed.
+  for index in "${!link_paths[@]}"; do
+    if ! check_link_destination "${targets[$index]}" "${link_paths[$index]}"; then
+      conflicts=1
+    fi
+  done
+
+  if [ "$conflicts" -ne 0 ]; then
+    echo "No links were changed. Move conflicting paths aside and run the installer again." >&2
+    return 1
+  fi
+
+  for index in "${!link_paths[@]}"; do
+    ensure_link "${targets[$index]}" "${link_paths[$index]}"
+  done
+}
+
+create_links
