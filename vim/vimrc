@@ -1,6 +1,8 @@
 
 so ~/.vim/general.vim
-so ~/.vim/bundles.vim
+if filereadable(expand('~/.vim/bundle/Vundle.vim/autoload/vundle.vim'))
+  so ~/.vim/bundles.vim
+endif
 so ~/.vim/shortcuts.vim
 so ~/.vim/extra.vim
 

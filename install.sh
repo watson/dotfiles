@@ -1,1 +1,1 @@
-scripts/create-links.sh
+scripts/install.sh

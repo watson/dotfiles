@@ -1,30 +1,52 @@
-source ~/dotfiles/zsh/zshrc.oh-my-zsh
+if [ -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
+  source ~/dotfiles/zsh/zshrc.oh-my-zsh
+fi
 
 # Use fzf for fuzzy searching (installed via Homebrew)
-source <(fzf --zsh)
+if command -v fzf >/dev/null 2>&1; then
+  source <(fzf --zsh)
+fi
 
 # BEGIN ANSIBLE MANAGED BLOCK
-# Load homebrew shell variables
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Load Homebrew shell variables when Homebrew is installed.
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /usr/local/bin/brew ]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+elif command -v brew >/dev/null 2>&1; then
+  eval "$(brew shellenv)"
+fi
 
 # Force certain more-secure behaviours from homebrew
 export HOMEBREW_NO_INSECURE_REDIRECT=1
 export HOMEBREW_CASK_OPTS=--require-sha
-export HOMEBREW_DIR=/opt/homebrew
-export HOMEBREW_BIN=/opt/homebrew/bin
+if command -v brew >/dev/null 2>&1; then
+  export HOMEBREW_DIR="$(brew --prefix)"
+  export HOMEBREW_BIN="$HOMEBREW_DIR/bin"
+fi
 
-# Load python shims
-eval "$(pyenv init -)"
+# Load Python shims when pyenv is installed.
+if command -v pyenv >/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
 
-# Load ruby shims
-eval "$(rbenv init -)"
+# Load Ruby shims when rbenv is installed.
+if command -v rbenv >/dev/null 2>&1; then
+  eval "$(rbenv init -)"
+fi
 
 # Prefer GNU binaries to Macintosh binaries.
-export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+if [ -n "$HOMEBREW_DIR" ] && [ -d "$HOMEBREW_DIR/opt/coreutils/libexec/gnubin" ]; then
+  export PATH="$HOMEBREW_DIR/opt/coreutils/libexec/gnubin:$PATH"
+fi
 
-# Add GCloud to PATH
-source "/opt/homebrew/share/google-cloud-sdk/path.zsh.inc"
-source "/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc"
+# Add Google Cloud SDK to PATH when it is installed.
+if [ -n "$HOMEBREW_DIR" ]; then
+  [ -f "$HOMEBREW_DIR/share/google-cloud-sdk/path.zsh.inc" ] && \
+    source "$HOMEBREW_DIR/share/google-cloud-sdk/path.zsh.inc"
+  [ -f "$HOMEBREW_DIR/share/google-cloud-sdk/completion.zsh.inc" ] && \
+    source "$HOMEBREW_DIR/share/google-cloud-sdk/completion.zsh.inc"
+fi
 # Add datadog devtools binaries to the PATH
 export PATH="$HOME/dd/devtools/bin:$PATH"
 

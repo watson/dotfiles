@@ -40,32 +40,3 @@ ln -sfn "$dotfiles_dir/vim/vimrc"           "$HOME/.vimrc"
 ln -sfn "$dotfiles_dir/tmux/tmux.conf"      "$HOME/.tmux.conf"
 ln -sfn "$dotfiles_dir/gitconfig"           "$HOME/.gitconfig"
 ln -sfn "$dotfiles_dir/npmrc"               "$HOME/.npmrc"
-
-# Install the configured Vim plugins when Vim is already available. Vundle is
-# needed before Vim can understand the Plugin commands in bundles.vim.
-if command -v vim >/dev/null 2>&1; then
-  vundle_dir="$dotfiles_dir/vim/bundle/Vundle.vim"
-
-  if [ ! -d "$vundle_dir/.git" ]; then
-    if ! command -v git >/dev/null 2>&1; then
-      echo "Cannot install Vim plugins: git is not installed." >&2
-      exit 1
-    fi
-
-    mkdir -p "$(dirname "$vundle_dir")"
-    git clone https://github.com/VundleVim/Vundle.vim.git "$vundle_dir"
-  fi
-
-  echo "Installing Vim plugins..."
-  vim -Nu "$dotfiles_dir/vim/vimrc" +PluginInstall +qall
-fi
-
-# linux only
-# if [ "$(uname)" == "Linux" ] && [ -f /etc/pacman.conf ]; then
-#   # put linux only commands here
-# fi
-
-# mac only
-# if [ "$(uname)" == "Darwin" ]; then
-#   # put mac only commands here
-# fi
