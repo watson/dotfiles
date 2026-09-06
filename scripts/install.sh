@@ -40,6 +40,7 @@ source "$script_dir/configure-git-signing.sh"
 install_required_dependencies
 install_nvm
 install_claude_code
+install_codex_cli
 install_oh_my_zsh
 "$script_dir/create-links.sh"
 configure_git_signing

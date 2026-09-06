@@ -160,3 +160,30 @@ install_claude_code() {
 
   rm -f "$installer_path"
 }
+
+install_codex_cli() {
+  local brew_bin=""
+
+  if command -v codex >/dev/null 2>&1; then
+    echo "Codex CLI is already installed."
+    return
+  fi
+
+  if [ "$(uname -s)" != "Darwin" ]; then
+    return
+  fi
+
+  if ! brew_bin="$(find_homebrew)"; then
+    echo "Cannot install Codex CLI: Homebrew is not installed. Continuing setup." >&2
+    return
+  fi
+
+  echo "Missing optional dependency: Codex CLI"
+  if ! confirm "Install Codex CLI with Homebrew?"; then
+    return
+  fi
+
+  if ! "$brew_bin" install --cask codex; then
+    echo "Codex CLI installation failed. Continuing setup." >&2
+  fi
+}
