@@ -35,12 +35,14 @@ confirm() {
 
 source "$script_dir/install-dependencies.sh"
 source "$script_dir/install-plugins.sh"
+source "$script_dir/configure-git-signing.sh"
 
 install_required_dependencies
 install_nvm
 install_claude_code
 install_oh_my_zsh
 "$script_dir/create-links.sh"
+configure_git_signing
 install_tpm "$dotfiles_dir"
 install_vim_plugins "$dotfiles_dir"
 install_tmux_plugins "$dotfiles_dir"
