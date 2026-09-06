@@ -93,6 +93,13 @@ if gitlab_token="$(security find-generic-password -a "${USER}" -s gitlab_token -
 fi
 unset gitlab_token
 
+# Default editor for gh, git commit, etc.
+if command -v cursor >/dev/null 2>&1; then
+  export EDITOR="cursor --wait"
+elif command -v code >/dev/null 2>&1; then
+  export EDITOR="code --wait"
+fi
+
 # command history
 export HISTSIZE=10000
 export HISTFILE="$HOME/.history"
