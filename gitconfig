@@ -30,3 +30,5 @@
 	path = ~/.gitconfig.local
 [includeIf "hasconfig:remote.*.url:git@github.com:DataDog/*"]
 	path = ~/dd/.gitconfig
+[init]
+	defaultBranch = main
