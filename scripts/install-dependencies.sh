@@ -121,3 +121,42 @@ install_nvm() {
   echo "Installing NVM $latest_version..."
   git clone --depth=1 --branch "$latest_version" "$repository" "$install_dir"
 }
+
+install_claude_code() {
+  local claude_bin="$HOME/.local/bin/claude"
+  local installer_path
+
+  if command -v claude >/dev/null 2>&1 || [ -x "$claude_bin" ]; then
+    echo "Claude Code is already installed."
+    return
+  fi
+
+  echo "Missing optional dependency: Claude Code"
+  if ! confirm "Install Claude Code using Anthropic's native installer?"; then
+    return
+  fi
+
+  if ! command -v curl >/dev/null 2>&1; then
+    echo "Cannot install Claude Code: curl is not installed. Continuing setup." >&2
+    return
+  fi
+
+  if ! installer_path="$(mktemp -t claude-code-install)"; then
+    echo "Cannot install Claude Code: could not create a temporary file. Continuing setup." >&2
+    return
+  fi
+
+  if ! curl -fsSL https://claude.ai/install.sh -o "$installer_path"; then
+    echo "Claude Code installer download failed. Continuing setup." >&2
+    rm -f "$installer_path"
+    return
+  fi
+
+  if ! /bin/bash "$installer_path"; then
+    echo "Claude Code installation failed. Continuing setup." >&2
+    rm -f "$installer_path"
+    return
+  fi
+
+  rm -f "$installer_path"
+}

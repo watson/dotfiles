@@ -25,6 +25,10 @@ if command -v brew >/dev/null 2>&1; then
   export HOMEBREW_BIN="$HOMEBREW_DIR/bin"
 fi
 
+# Prefer user-local binaries to general Homebrew and macOS binaries.
+typeset -U path PATH
+path=("$HOME/.local/bin" $path)
+
 # Load Python shims when pyenv is installed.
 if command -v pyenv >/dev/null 2>&1; then
   eval "$(pyenv init -)"
@@ -117,9 +121,6 @@ alias nack='ack --ignore-dir=node_modules'
 alias npm-offline='npm install --cache-min 999999'
 alias unfuck='tput rmacs'
 alias chrome='open -a /Applications/Google\ Chrome.app'
-
-# Created by `pipx` on 2025-09-15 08:19:26
-export PATH="$PATH:/Users/thomas.watson/.local/bin"
 
 # BEGIN SCFW MANAGED BLOCK
 alias npm="scfw run npm"
