@@ -1,3 +1,5 @@
+[[ -r "$HOME/.zshrc.local.pre" ]] && source "$HOME/.zshrc.local.pre"
+
 if [ -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
   source ~/dotfiles/zsh/zshrc.oh-my-zsh
 fi
@@ -7,7 +9,6 @@ if command -v fzf >/dev/null 2>&1; then
   source <(fzf --zsh)
 fi
 
-# BEGIN ANSIBLE MANAGED BLOCK
 # Load Homebrew shell variables when Homebrew is installed.
 if [ -x /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -44,55 +45,6 @@ if [ -n "$HOMEBREW_DIR" ] && [ -d "$HOMEBREW_DIR/opt/coreutils/libexec/gnubin" ]
   export PATH="$HOMEBREW_DIR/opt/coreutils/libexec/gnubin:$PATH"
 fi
 
-# Add Google Cloud SDK to PATH when it is installed.
-if [ -n "$HOMEBREW_DIR" ]; then
-  [ -f "$HOMEBREW_DIR/share/google-cloud-sdk/path.zsh.inc" ] && \
-    source "$HOMEBREW_DIR/share/google-cloud-sdk/path.zsh.inc"
-  [ -f "$HOMEBREW_DIR/share/google-cloud-sdk/completion.zsh.inc" ] && \
-    source "$HOMEBREW_DIR/share/google-cloud-sdk/completion.zsh.inc"
-fi
-# Add datadog devtools binaries to the PATH
-export PATH="$HOME/dd/devtools/bin:$PATH"
-
-# Point GOPATH to our go sources
-export GOPATH="$HOME/go"
-
-# Add binaries that are go install-ed to PATH
-export PATH="$GOPATH/bin:$PATH"
-
-# Point DATADOG_ROOT to ~/dd symlink
-export DATADOG_ROOT="$HOME/dd"
-
-# Tell the devenv vm to mount $GOPATH/src rather than just dd-go
-export MOUNT_ALL_GO_SRC=1
-
-# store key in the login keychain instead of aws-vault managing a hidden keychain
-export AWS_VAULT_KEYCHAIN_NAME=login
-
-# tweak session times so you don't have to re-enter passwords every 5min
-export AWS_SESSION_TTL=24h
-export AWS_ASSUME_ROLE_TTL=1h
-
-# Helm switch from storing objects in kubernetes configmaps to
-# secrets by default, but we still use the old default.
-export HELM_DRIVER=configmap
-
-# Go 1.16+ sets GO111MODULE to off by default with the intention to
-# remove it in Go 1.18, which breaks projects using the dep tool.
-# https://blog.golang.org/go116-module-changes
-export GO111MODULE=auto
-export GOPRIVATE=github.com/DataDog
-# Configure Go to pull go.ddbuild.io packages.
-export GOPROXY=binaries.ddbuild.io,https://proxy.golang.org,direct
-export GONOSUMDB=github.com/DataDog,go.ddbuild.io
-# END ANSIBLE MANAGED BLOCK
-
-# GitLab (Datadog)
-if gitlab_token="$(security find-generic-password -a "${USER}" -s gitlab_token -w 2>/dev/null)"; then
-  export GITLAB_TOKEN="$gitlab_token"
-fi
-unset gitlab_token
-
 # Default editor for gh, git commit, etc.
 if command -v cursor >/dev/null 2>&1; then
   export EDITOR="cursor --wait"
@@ -115,9 +67,6 @@ export NVM_AUTOLOAD=1
 export CC="ccache cc"
 export CXX="ccache c++"
 
-# libpq (required by `pg-native`, which is required by `yarn services` in `dd-trace-js`)
-export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
-
 # Make Python 3.12 the default
 export PATH="/opt/homebrew/opt/python@3.12/libexec/bin:$PATH"
 
@@ -129,11 +78,4 @@ alias npm-offline='npm install --cache-min 999999'
 alias unfuck='tput rmacs'
 alias chrome='open -a /Applications/Google\ Chrome.app'
 
-# BEGIN SCFW MANAGED BLOCK
-alias npm="scfw run npm"
-alias pip="scfw run pip"
-alias poetry="scfw run poetry"
-export SCFW_DD_AGENT_LOG_PORT="10365"
-export SCFW_DD_LOG_LEVEL="ALLOW"
-export SCFW_HOME="/Users/thomas.watson/.scfw"
-# END SCFW MANAGED BLOCK
+[[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
