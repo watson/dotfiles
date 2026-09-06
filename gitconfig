@@ -26,5 +26,6 @@
 	smudge = git-lfs smudge -- %f
 [include]
 	path = ~/dotfiles/gitconfig-signing
+	path = ~/.gitconfig-signing.local
 [includeIf "hasconfig:remote.*.url:git@github.com:DataDog/*"]
 	path = ~/dd/.gitconfig
