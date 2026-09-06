@@ -31,7 +31,7 @@ path=("$HOME/.local/bin" $path)
 
 # Load Python shims when pyenv is installed.
 if command -v pyenv >/dev/null 2>&1; then
-  eval "$(pyenv init -)"
+  eval "$(pyenv init - --no-rehash)"
 fi
 
 # Load Ruby shims when rbenv is installed.
