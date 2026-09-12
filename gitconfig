@@ -12,7 +12,6 @@
 	new = green
 [core]
 	editor = vim
-	symlinks = false
 	hooksPath = /usr/local/dd/global_hooks
 [push]
 	default = simple
