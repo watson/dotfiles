@@ -44,10 +44,6 @@ fi
 if [ -n "$HOMEBREW_DIR" ] && [ -d "$HOMEBREW_DIR/opt/coreutils/libexec/gnubin" ]; then
   export PATH="$HOMEBREW_DIR/opt/coreutils/libexec/gnubin:$PATH"
 fi
-if [ -n "$HOMEBREW_DIR" ] && [ -d "$HOMEBREW_DIR/opt/gnu-tar/libexec/gnubin" ]; then
-  export PATH="$HOMEBREW_DIR/opt/gnu-tar/libexec/gnubin:$PATH"
-fi
-
 # Default editor for gh, git commit, etc.
 if command -v cursor >/dev/null 2>&1; then
   export EDITOR="cursor --wait"
