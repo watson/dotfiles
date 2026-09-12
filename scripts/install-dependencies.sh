@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 REQUIRED_HOMEBREW_DEPENDENCIES=(vim tmux fzf git git-lfs ack)
-PREFERRED_HOMEBREW_DEPENDENCIES=(wget)
+PREFERRED_HOMEBREW_DEPENDENCIES=(wget gnu-tar)
 
 find_homebrew() {
   if command -v brew >/dev/null 2>&1; then
