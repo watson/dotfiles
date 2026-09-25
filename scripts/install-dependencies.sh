@@ -162,28 +162,40 @@ install_claude_code() {
 }
 
 install_codex_cli() {
-  local brew_bin=""
+  local codex_bin="$HOME/.local/bin/codex"
+  local installer_path
 
-  if command -v codex >/dev/null 2>&1; then
+  if command -v codex >/dev/null 2>&1 || [ -x "$codex_bin" ]; then
     echo "Codex CLI is already installed."
     return
   fi
 
-  if [ "$(uname -s)" != "Darwin" ]; then
-    return
-  fi
-
-  if ! brew_bin="$(find_homebrew)"; then
-    echo "Cannot install Codex CLI: Homebrew is not installed. Continuing setup." >&2
-    return
-  fi
-
   echo "Missing optional dependency: Codex CLI"
-  if ! confirm "Install Codex CLI with Homebrew?"; then
+  if ! confirm "Install Codex CLI using OpenAI's standalone installer?"; then
     return
   fi
 
-  if ! "$brew_bin" install --cask codex; then
-    echo "Codex CLI installation failed. Continuing setup." >&2
+  if ! command -v curl >/dev/null 2>&1; then
+    echo "Cannot install Codex CLI: curl is not installed. Continuing setup." >&2
+    return
   fi
+
+  if ! installer_path="$(mktemp -t codex-cli-install)"; then
+    echo "Cannot install Codex CLI: could not create a temporary file. Continuing setup." >&2
+    return
+  fi
+
+  if ! curl -fsSL https://chatgpt.com/codex/install.sh -o "$installer_path"; then
+    echo "Codex CLI installer download failed. Continuing setup." >&2
+    rm -f "$installer_path"
+    return
+  fi
+
+  if ! CODEX_NON_INTERACTIVE=1 /bin/sh "$installer_path"; then
+    echo "Codex CLI installation failed. Continuing setup." >&2
+    rm -f "$installer_path"
+    return
+  fi
+
+  rm -f "$installer_path"
 }
