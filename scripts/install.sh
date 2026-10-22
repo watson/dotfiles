@@ -47,3 +47,10 @@ configure_git_signing
 install_tpm "$dotfiles_dir"
 install_vim_plugins "$dotfiles_dir"
 install_tmux_plugins "$dotfiles_dir"
+
+if confirm "Install the shared Claude Code and Codex skills?"; then
+  "$dotfiles_dir/ai/run.sh" install
+  if [ "$(uname -s)" = "Darwin" ] && confirm "Enable daily skill updates at 04:00?"; then
+    "$dotfiles_dir/ai/run.sh" schedule install
+  fi
+fi

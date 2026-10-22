@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "cliVersion": "1.7.0",
+  "agents": ["codex", "claude-code"],
+  "sources": [
+    {
+      "repository": "mattpocock/skills",
+      "skills": [
+        {"name": "code-review", "path": "skills/engineering/code-review/SKILL.md"},
+        {"name": "codebase-design", "path": "skills/engineering/codebase-design/SKILL.md"},
+        {"name": "domain-modeling", "path": "skills/engineering/domain-modeling/SKILL.md"},
+        {"name": "grill-me", "path": "skills/productivity/grill-me/SKILL.md"},
+        {"name": "grilling", "path": "skills/productivity/grilling/SKILL.md"},
+        {"name": "improve-codebase-architecture", "path": "skills/engineering/improve-codebase-architecture/SKILL.md"},
+        {"name": "pr", "path": "skills/engineering/pr/SKILL.md"},
+        {"name": "retro", "path": "skills/engineering/retro/SKILL.md"},
+        {"name": "setup-matt-pocock-skills", "path": "skills/engineering/setup-matt-pocock-skills/SKILL.md"},
+        {"name": "triage", "path": "skills/engineering/triage/SKILL.md"},
+        {"name": "wizard", "path": "skills/engineering/wizard/SKILL.md"},
+        {"name": "writing-for-agents", "path": "skills/productivity/writing-for-agents/SKILL.md"}
+      ]
+    },
+    {"repository": "upstash/context7", "skills": [{"name": "find-docs", "path": "skills/find-docs/SKILL.md"}]},
+    {"repository": "vercel-labs/skills", "skills": [{"name": "find-skills", "path": "skills/find-skills/SKILL.md"}]},
+    {"repository": "anthropics/skills", "skills": [{"name": "frontend-design", "path": "skills/frontend-design/SKILL.md"}]}
+  ]
+}
