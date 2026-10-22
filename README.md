@@ -23,3 +23,11 @@ The installer is safe to run again later:
 ```bash
 ~/dotfiles/install.sh
 ```
+
+The installer also offers the [shared Claude Code and Codex skills](ai/README.md)
+and, separately, an optional macOS daily update schedule. Both are opt-in.
+You can inspect the setup without changing it:
+
+```bash
+~/dotfiles/ai/run.sh status
+```
