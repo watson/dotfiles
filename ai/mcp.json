@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "servers": [
+    {"name": "simplycom", "url": "https://mcp.simply.com/v2", "oauth": true}
+  ]
+}

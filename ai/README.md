@@ -1,12 +1,13 @@
-# Shared AI skills
+# Shared AI skills and MCP servers
 
 `skills.json` is the source of truth for 15 user-level skills shared by Codex
 and Claude Code. It records their upstream repositories, skill paths, target
 agents, and the pinned installer version (`skills@1.7.0`).
 
-This manages standalone skills only. Plugins, account-synced skills, project
-skills, MCP connections, credentials, and the agents' settings are outside its
-scope. It does not install the Matt Pocock plugin or execute any skill workflow.
+The skills setup manages standalone skills only. [MCP servers](#mcp-servers) are
+configured separately from `mcp.json`. Plugins, account-synced skills, project
+skills, credentials, and the agents' other settings are outside its scope. It
+does not install the Matt Pocock plugin or execute any skill workflow.
 
 ## Selection
 
@@ -124,10 +125,49 @@ restored and its job reloaded if it was previously loaded. The old script and
 README are retained so migration can be reversed. To revert, remove the new
 schedule, restore the backed-up plist, and load it with `launchctl bootstrap`.
 
+## MCP servers
+
+`mcp.json` lists remote MCP servers to register at user scope in both Claude Code
+and Codex. It currently contains [Simply.com's AI connector](https://www.simply.com/en/ai/connector/)
+as `simplycom` (`https://mcp.simply.com/v2`), for DNS, mail, domains and other
+Simply.com account resources.
+
+```sh
+~/dotfiles/ai/run.sh mcp status    # offline; exit 1 for missing/conflicting servers
+~/dotfiles/ai/run.sh mcp install   # adds missing servers and logs in to new ones
+```
+
+Servers are registered through each agent's own CLI (`claude mcp add --scope user`
+and `codex mcp add`), so `CLAUDE_CONFIG_DIR` and `CODEX_HOME` are honored. Both
+CLIs must be installed, either on `PATH` or in `~/.local/bin`. Status reads
+configuration only. It does not connect to servers or check whether you are
+logged in.
+
+The manifest accepts only a name, an HTTPS URL and whether the server uses OAuth.
+Headers and tokens are rejected so credentials cannot end up in this public repo.
+Each agent keeps its OAuth tokens in its own credential store.
+
+Install checks both agents before changing either. An existing entry with the
+same name but a different transport or URL aborts the install and is left as is.
+Codex would otherwise overwrite it silently. Matching entries, including any
+extra settings you added to them, are left alone.
+
+For each newly added OAuth server, install opens a browser to log in. Claude Code
+logs in through `claude mcp login`, and Codex logs in as part of `codex mcp add`.
+A login you do not complete is reported at the end and the configuration is kept.
+To retry, or to log in again after Simply.com's 30-day refresh token expires, run
+`claude mcp login simplycom` (or `/mcp` in Claude Code) and
+`codex mcp login simplycom`. You can revoke access under connected apps in the
+Simply.com control panel.
+
+Removing an entry from `mcp.json` stops managing it. It does not remove the
+server from either agent. Use `claude mcp remove --scope user <name>` and
+`codex mcp remove <name>` for that.
+
 ## Development checks
 
 ```sh
-node --test ai/skills.test.mjs
+node --test ai/skills.test.mjs ai/mcp.test.mjs
 bash -n ai/run.sh scripts/install.sh
 ```
 
