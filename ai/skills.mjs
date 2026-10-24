@@ -3,6 +3,7 @@ import * as fs from 'node:fs';
 import {homedir} from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {mcp} from './mcp.mjs';
 import {schedule} from './schedule.mjs';
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
@@ -170,11 +171,13 @@ export function createManager({homeDir = homedir(), manifest = readManifest(),
 }
 
 async function main() {
+  const [command, ...args] = process.argv.slice(2);
+  // MCP setup only drives the agents' own CLIs, so it does not need the skills CLI's Node version.
+  if (command === 'mcp') return mcp(args, {execute: run});
   const [major, minor] = process.versions.node.split('.').map(Number);
   if (major < 22 || (major === 22 && minor < 20)) {
     throw new Error('skills@1.7.0 requires Node.js 22.20.0 or newer. Upgrade Node or the nvm default.');
   }
-  const [command, ...args] = process.argv.slice(2);
   if (command === 'schedule') {
     if (args[0] === 'install' && !createManager().status()) {
       throw new Error('Run ai/run.sh install before enabling scheduled updates.');
@@ -183,7 +186,7 @@ async function main() {
   }
   if (!['install', 'status', 'update'].includes(command) ||
       args.some(arg => arg !== '--log') || (args.length && command !== 'update')) {
-    throw new Error('Usage: ai/run.sh install | status | update [--log] | schedule install [--replace] | schedule status | schedule remove');
+    throw new Error('Usage: ai/run.sh install | status | update [--log] | schedule install [--replace] | schedule status | schedule remove | mcp install | mcp status');
   }
   let log;
   if (args.includes('--log')) {

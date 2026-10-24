@@ -54,3 +54,7 @@ if confirm "Install the shared Claude Code and Codex skills?"; then
     "$dotfiles_dir/ai/run.sh" schedule install
   fi
 fi
+
+if confirm "Configure the shared MCP servers for Claude Code and Codex?"; then
+  "$dotfiles_dir/ai/run.sh" mcp install
+fi
